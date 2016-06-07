@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Express Router," />
 
 
 
@@ -84,15 +84,21 @@
 
 
 
-<meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Lei's Home">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到www.expressjs.com自行查看express的官方文档，今天主要是想说下express的路由机制。
+最近抽时间看了下express的源码，看完源码体会最深刻的还是express的路由机制，感觉搞懂了express的路由就算是基本搞懂了expres">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Express源码解析之Router">
+<meta property="og:url" content="http://yoursite.com/2016/06/07/express-router/index.html">
 <meta property="og:site_name" content="Lei's Home">
-<meta property="og:description">
+<meta property="og:description" content="express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到www.expressjs.com自行查看express的官方文档，今天主要是想说下express的路由机制。
+最近抽时间看了下express的源码，看完源码体会最深刻的还是express的路由机制，感觉搞懂了express的路由就算是基本搞懂了expres">
+<meta property="og:image" content="http://o8dqfadzl.bkt.clouddn.com/F71C0D38-E66E-4059-A920-A23D2C34FA00.png">
+<meta property="og:updated_time" content="2016-06-07T10:52:19.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Lei's Home">
-<meta name="twitter:description">
+<meta name="twitter:title" content="Express源码解析之Router">
+<meta name="twitter:description" content="express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到www.expressjs.com自行查看express的官方文档，今天主要是想说下express的路由机制。
+最近抽时间看了下express的源码，看完源码体会最深刻的还是express的路由机制，感觉搞懂了express的路由就算是基本搞懂了expres">
+<meta name="twitter:image" content="http://o8dqfadzl.bkt.clouddn.com/F71C0D38-E66E-4059-A920-A23D2C34FA00.png">
 
 
 
@@ -113,9 +119,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/06/07/express-router/"/>
 
-  <title> Lei's Home </title>
+  <title> Express源码解析之Router | Lei's Home </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans.yml">
@@ -136,9 +142,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -215,9 +219,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -237,10 +241,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/06/07/express-router/" itemprop="url">
-                  Express源码解析之Router
-                </a>
+                Express源码解析之Router
               
             
           </h1>
@@ -280,9 +281,7 @@
       
 
       
-        
-          
-            <p>express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到<a href="www.expressjs.com">www.expressjs.com</a>自行查看express的官方文档，今天主要是想说下express的路由机制。</p>
+        <p>express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到<a href="www.expressjs.com">www.expressjs.com</a>自行查看express的官方文档，今天主要是想说下express的路由机制。</p>
 <p>最近抽时间看了下express的源码，看完源码体会最深刻的还是express的路由机制，感觉搞懂了express的路由就算是基本搞懂了express，而express的路由机制都是router模块来实现，所以在这里对express的router模块实现进行一下简单的整理，所有理解都来自自己对源码的理解，如有不对的地方，还请各位多多拍砖。</p>
 <p>好了，废话不多说了，进入正题，首先先了解一下express源码的目录结构，如下图：<br><img src="http://o8dqfadzl.bkt.clouddn.com/F71C0D38-E66E-4059-A920-A23D2C34FA00.png" alt="express源码目录结构"><br>application.js为express的主文件，express.js对application.js进行了包装，对外提供各种API，这里我们不多做说明，我们今天要说的就是router目录下的内容，express关于路由的具体实现都是由这个目录完成。我们先看一个简单的express路由的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var app = express();</span><br><span class="line">app.get(&apos;/hello&apos;, function(req,res)&#123;</span><br><span class="line">    res.send(&apos;hello everyone!!!&apos;); </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
 <p>上边就是一个最简单的express路由的例子，将path为 ‘/hello’ 的请求路由到当前的处理函数，并返回 ‘hello everyone!!!’ ，那么我们来一起看看，app.get()何实现的，通过查看代码我们发现源码里并没有app.get()的实现，但仔细找找你会在application.js中发现如下的代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">methods.forEach(function(method)&#123;</span><br><span class="line">  app[method] = function(path)&#123;</span><br><span class="line">    if (method === &apos;get&apos; &amp;&amp; arguments.length === 1) &#123;</span><br><span class="line">      // app.get(setting)</span><br><span class="line">      return this.set(path);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.lazyrouter();</span><br><span class="line"></span><br><span class="line">    var route = this._router.route(path);</span><br><span class="line">    route[method].apply(route, slice.call(arguments, 1));</span><br><span class="line">    return this;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
@@ -319,138 +318,58 @@
 <p>到这里，我们基本已经说明了router相关的所有内容，想必看到这里你一定会有点晕，我们接下来来重新梳理一下。看看express究竟是如何对http请求进行路由的。</p>
 <p>当客户端发送一个http请求后，会先进入express实例对象对应的router.handle函数中，router.handle函数会通过next()遍历stack中的每一个layer进行match，如果match返回true，则获取layer.route，执行route.dispatch函数，route.dispatch同样是通过next()遍历stack中的每一个layer，然后执行layer.handle_request，也就是调用中间件函数。直到所有的中间件函数被执行完毕，整个路由处理结束。</p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/06/06/hello-world/" itemprop="url">
-                  Hello World
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2016-06-06T15:24:10+08:00" content="2016-06-06">
-              2016-06-06
-            </time>
-          </span>
-
+        <div class="post-tags">
           
-
-          
-            
-          
-
-          
-
-          
-          
-
+            <a href="/tags/Express-Router/" rel="tag">#Express Router</a>
           
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/06/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
 
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -458,6 +377,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -477,8 +400,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -521,6 +453,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -617,6 +560,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
