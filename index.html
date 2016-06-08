@@ -288,8 +288,7 @@
 <li>我们应该在何时使用next？</li>
 <li>next的内部实现机制是什么？</li>
 </ol>
-<h3 id="Next的作用"><a href="#Next的作用" class="headerlink" title="Next的作用"></a>Next的作用</h3><p>我们在定义express中间件函数的时候都会将第三个参数定义为next，这个next就是我们今天的主角，next函数主要负责将控制权交给下一个中间件，如果当前中间件没有终结请求，并且next没有被调用，那么请求将被挂起，后边定义的中间件将得不到被执行的机会。</p>
-<h3 id="何时使用Next"><a href="#何时使用Next" class="headerlink" title="何时使用Next"></a>何时使用Next</h3><p>从上边的描述我们已经知道，next函数主要是用来确保所有注册的中间件被一个接一个的执行，那么我们就应该在所有的中间件中调用next函数，但有一个特例，如果我们定义的中间件终结了本次请求，那就不应该再调用next函数，否则就可能会出问题，我们来看段代码<br>
+<h3 id="Next的作用"><a href="#Next的作用" class="headerlink" title="Next的作用"></a>Next的作用</h3><p>我们在定义express中间件函数的时候都会将第三个参数定义为next，这个next就是我们今天的主角，next函数主要负责将控制权交给下一个中间件，如果当前中间件没有终结请求，并且next没有被调用，那么请求将被挂起，后边定义的中间件将得不到被执行的机会。<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/06/08/express-next/#more" rel="contents">
               阅读全文 &raquo;
