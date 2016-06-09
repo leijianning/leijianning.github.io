@@ -400,7 +400,7 @@
         
           <p>express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到<a href="http://www.expressjs.com">http://www.expressjs.com</a>自行查看express的官方文档，今天主要是想说下express的路由机制。</p>
 <p>最近抽时间看了下express的源码，看完源码体会最深刻的还是express的路由机制，感觉搞懂了express的路由就算是基本搞懂了express，而express的路由机制都是router模块来实现，所以在这里对express的router模块实现进行一下简单的整理，所有理解都来自自己对源码的理解，如有不对的地方，还请各位多多拍砖。</p>
-<p>好了，废话不多说了，进入正题，首先先了解一下express源码的目录结构，如下图：<br><img src="http://o8dqfadzl.bkt.clouddn.com/F71C0D38-E66E-4059-A920-A23D2C34FA00.png" alt="express源码目录结构"><br>application.js为express的主文件，express.js对application.js进行了包装，对外提供各种API，这里我们不多做说明，我们今天要说的就是router目录下的内容，express关于路由的具体实现都是由这个目录完成。我们先看一个简单的express路由的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var app = express();</span><br><span class="line">app.get(&apos;/hello&apos;, function(req,res)&#123;</span><br><span class="line">    res.send(&apos;hello everyone!!!&apos;); </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>好了，废话不多说了，进入正题，首先先了解一下express源码的目录结构，如下图：<br><img src="http://o8dqfadzl.bkt.clouddn.com/F71C0D38-E66E-4059-A920-A23D2C34FA00.png" alt="express源码目录结构"><br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/06/07/express-router/#more" rel="contents">
               阅读全文 &raquo;
