@@ -288,40 +288,12 @@
 
       
         
-          
-            <h3 id="Expires策略"><a href="#Expires策略" class="headerlink" title="Expires策略"></a>Expires策略</h3><p>Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。</p>
-<h3 id="Cache-control策略（重点关注）"><a href="#Cache-control策略（重点关注）" class="headerlink" title="Cache-control策略（重点关注）"></a>Cache-control策略（重点关注）</h3><p>Cache-Control与Expires的作用一致，都是指明当前资源的有效期，控制浏览器是否直接从浏览器缓存取数据还是重新发请求到服务器取数据。只不过Cache-Control的选择更多，设置更细致，如果同时设置的话，其优先级高于Expires。</p>
-<p>值可以是public、private、no-cache、no- store、no-transform、must-revalidate、proxy-revalidate、max-age，各个消息中的指令含义如下：        </p>
-<ol>
-<li>Public指示响应可被任何缓存区缓存。</li>
-<li>Private指示对于单个用户的整个或部分响应消息，不能被共享缓存处理。这允许服务器仅仅描述当前用户的部分响应消息，此响应消息对于其他用户的请求无效。</li>
-<li>no-cache指示请求或响应消息不能缓存</li>
-<li>no-store用于防止重要的信息被无意的发布。在请求消息中发送将使得请求和响应消息都不使用缓存。</li>
-<li>max-age指示客户机可以接收生存期不大于指定时间（以秒为单位）的响应。</li>
-<li>min-fresh指示客户机可以接收响应时间小于当前时间加上指定时间的响应。</li>
-<li>max-stale指示客户机可以接收超出超时期间的响应消息。如果指定max-stale消息的值，那么客户机可以接收超出超时期指定值之内的响应消息。</li>
-</ol>
-<h3 id="Last-Modified-If-Modified-Since"><a href="#Last-Modified-If-Modified-Since" class="headerlink" title="Last-Modified/If-Modified-Since"></a>Last-Modified/If-Modified-Since</h3><p>Last-Modified/If-Modified-Since要配合Cache-Control使用。</p>
-<ul>
-<li>Last-Modified：标示这个响应资源的最后修改时间。web服务器在响应请求时，告诉浏览器资源的最后修改时间。</li>
-<li>If-Modified-Since：当资源过期时（使用Cache-Control标识的max-age），发现资源具有Last-Modified声明，则再次向web服务器请求时带上头 If-Modified-Since，表示请求时间。web服务器收到请求后发现有头If-Modified-Since 则与被请求资源的最后修改时间进行比对。若最后修改时间较新，说明资源又被改动过，则响应整片资源内容（写在响应消息包体内），HTTP 200；若最后修改时间较旧，说明资源无新修改，则响应HTTP 304 (无需包体，节省浏览)，告知浏览器继续使用所保存的cache。</li>
-</ul>
-<h3 id="Etag-If-None-Match"><a href="#Etag-If-None-Match" class="headerlink" title="Etag/If-None-Match"></a>Etag/If-None-Match</h3><p>Etag/If-None-Match也要配合Cache-Control使用。</p>
-<ul>
-<li>Etag：web服务器响应请求时，告诉浏览器当前资源在服务器的唯一标识（生成规则由服务器觉得）。Apache中，ETag的值，默认是对文件的索引节（INode），大小（Size）和最后修改时间（MTime）进行Hash后得到的。</li>
-<li>If-None-Match：当资源过期时（使用Cache-Control标识的max-age），发现资源具有Etage声明，则再次向web服务器请求时带上头If-None-Match（Etag的值）。web服务器收到请求后发现有头If-None-Match 则与被请求资源的相应校验串进行比对，决定返回200或304。</li>
-</ul>
-<h3 id="既生Last-Modified何生Etag？"><a href="#既生Last-Modified何生Etag？" class="headerlink" title="既生Last-Modified何生Etag？"></a>既生Last-Modified何生Etag？</h3><p>你可能会觉得使用Last-Modified已经足以让浏览器知道本地的缓存副本是否足够新，为什么还需要Etag（实体标识）呢？HTTP1.1中Etag的出现主要是为了解决几个Last-Modified比较难解决的问题：</p>
-<ul>
-<li>Last-Modified标注的最后修改只能精确到秒级，如果某些文件在1秒钟以内，被修改多次的话，它将不能准确标注文件的修改时间</li>
-<li>如果某些文件会被定期生成，当有时内容并没有任何变化，但Last-Modified却改变了，导致文件没法使用缓存</li>
-<li>有可能存在服务器没有准确获取文件修改时间，或者与代理服务器时间不一致等情形</li>
-</ul>
-<p>Etag是服务器自动生成或者由开发者生成的对应资源在服务器端的唯一标识符，能够更加准确的控制缓存。Last-Modified与ETag是可以一起使用的，服务器会优先验证ETag，一致的情况下，才会继续比对Last-Modified，最后才决定是否返回304。</p>
-<p><img src="http://o8dqfadzl.bkt.clouddn.com/cache1.png" alt="enter image description here"></p>
-<p><img src="http://o8dqfadzl.bkt.clouddn.com/cache2.png" alt="enter image description here"></p>
-
-          
+          <h3 id="Expires策略"><a href="#Expires策略" class="headerlink" title="Expires策略"></a>Expires策略</h3><p>Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/06/10/http-cache/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -419,14 +391,7 @@
 
       
         
-          <p>最近公司在使用node做前后端分离，采用的web框架是express，所以对express框架进行了深入的了解，前段时间写了篇关于express路由的文章，但是在那篇文章中貌似少了一个很重要的内容，就是express的next，所以今天单独来说说express的next。</p>
-<p>关于next主要从三点来进行说明：</p>
-<ol>
-<li>next的作用是什么？</li>
-<li>我们应该在何时使用next？</li>
-<li>next的内部实现机制是什么？</li>
-</ol>
-<h3 id="Next的作用"><a href="#Next的作用" class="headerlink" title="Next的作用"></a>Next的作用</h3><p>我们在定义express中间件函数的时候都会将第三个参数定义为next，这个next就是我们今天的主角，next函数主要负责将控制权交给下一个中间件，如果当前中间件没有终结请求，并且next没有被调用，那么请求将被挂起，后边定义的中间件将得不到被执行的机会。<br>
+          <p>最近公司在使用node做前后端分离，采用的web框架是express，所以对express框架进行了深入的了解，前段时间写了篇关于express路由的文章，但是在那篇文章中貌似少了一个很重要的内容，就是express的next，所以今天单独来说说express的next。<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/06/08/express-next/#more" rel="contents">
               阅读全文 &raquo;
@@ -529,9 +494,7 @@
 
       
         
-          <p>express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到<a href="http://www.expressjs.com">http://www.expressjs.com</a>自行查看express的官方文档，今天主要是想说下express的路由机制。</p>
-<p>最近抽时间看了下express的源码，看完源码体会最深刻的还是express的路由机制，感觉搞懂了express的路由就算是基本搞懂了express，而express的路由机制都是router模块来实现，所以在这里对express的router模块实现进行一下简单的整理，所有理解都来自自己对源码的理解，如有不对的地方，还请各位多多拍砖。</p>
-<p>好了，废话不多说了，进入正题，首先先了解一下express源码的目录结构，如下图：<br><img src="http://o8dqfadzl.bkt.clouddn.com/F71C0D38-E66E-4059-A920-A23D2C34FA00.png" alt="express源码目录结构"><br>
+          <p>express作为nodejs平台下非常流行的web框架，相信大家都对其已经很熟悉了，对于express的使用这里不再多说，如有需要可以移步到<a href="http://www.expressjs.com">http://www.expressjs.com</a>自行查看express的官方文档，今天主要是想说下express的路由机制。<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/06/07/express-router/#more" rel="contents">
               阅读全文 &raquo;

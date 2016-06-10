@@ -84,21 +84,18 @@
 
 
 
-<meta name="description" content="Expires策略Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。
-Cache-control策略（重点关注）Cache-Control与Expires的作用一致，都是指明当前资源的有效期，控制浏览器是">
+<meta name="description" content="Expires策略Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Http缓存策略总结">
 <meta property="og:url" content="http://yoursite.com/2016/06/10/http-cache/index.html">
 <meta property="og:site_name" content="Lei's Home">
-<meta property="og:description" content="Expires策略Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。
-Cache-control策略（重点关注）Cache-Control与Expires的作用一致，都是指明当前资源的有效期，控制浏览器是">
+<meta property="og:description" content="Expires策略Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。">
 <meta property="og:image" content="http://o8dqfadzl.bkt.clouddn.com/cache1.png">
 <meta property="og:image" content="http://o8dqfadzl.bkt.clouddn.com/cache2.png">
-<meta property="og:updated_time" content="2016-06-10T12:13:53.000Z">
+<meta property="og:updated_time" content="2016-06-10T12:15:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Http缓存策略总结">
-<meta name="twitter:description" content="Expires策略Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。
-Cache-control策略（重点关注）Cache-Control与Expires的作用一致，都是指明当前资源的有效期，控制浏览器是">
+<meta name="twitter:description" content="Expires策略Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。">
 <meta name="twitter:image" content="http://o8dqfadzl.bkt.clouddn.com/cache1.png">
 
 
@@ -289,7 +286,7 @@ Cache-control策略（重点关注）Cache-Control与Expires的作用一致，�
       
 
       
-        <h3 id="Expires策略"><a href="#Expires策略" class="headerlink" title="Expires策略"></a>Expires策略</h3><p>Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。</p>
+        <h3 id="Expires策略"><a href="#Expires策略" class="headerlink" title="Expires策略"></a>Expires策略</h3><p>Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。<br><a id="more"></a></p>
 <h3 id="Cache-control策略（重点关注）"><a href="#Cache-control策略（重点关注）" class="headerlink" title="Cache-control策略（重点关注）"></a>Cache-control策略（重点关注）</h3><p>Cache-Control与Expires的作用一致，都是指明当前资源的有效期，控制浏览器是否直接从浏览器缓存取数据还是重新发请求到服务器取数据。只不过Cache-Control的选择更多，设置更细致，如果同时设置的话，其优先级高于Expires。</p>
 <p>值可以是public、private、no-cache、no- store、no-transform、must-revalidate、proxy-revalidate、max-age，各个消息中的指令含义如下：        </p>
 <ol>
